@@ -62,7 +62,7 @@ public class Livro : Material
 	public Livro(string codigo, string titulo, int anoPublicacao)
 		: base(codigo, titulo, anoPublicacao) { }
 
-	public override int CalcularPrazoDias() => 14; // Prazo de 14 dias para livros
+	public override int CalcularPrazoDias() => 14;
 }
 
 public class Revista : Material
@@ -70,7 +70,7 @@ public class Revista : Material
 	public Revista(string codigo, string titulo, int anoPublicacao)
 		: base(codigo, titulo, anoPublicacao) { }
 
-	public override int CalcularPrazoDias() => 7; // Prazo de 7 dias para revistas
+	public override int CalcularPrazoDias() => 7;
 }
 
 public class DVD : Material
@@ -78,7 +78,7 @@ public class DVD : Material
 	public DVD(string codigo, string titulo, int anoPublicacao)
 		: base(codigo, titulo, anoPublicacao) { }
 
-	public override int CalcularPrazoDias() => 3; // Prazo de 3 dias para DVDs
+	public override int CalcularPrazoDias() => 3;
 }
 
 public class Biblioteca
@@ -94,10 +94,21 @@ public class Biblioteca
 	public void ConsultarMateriais()
 	{
 		Console.WriteLine("=== Materiais na Biblioteca ===");
+		if (materiais.Count == 0)
+		{
+			Console.WriteLine("Nenhum material cadastrado.");
+			return;
+		}
+
 		foreach (var material in materiais)
 		{
-			Console.WriteLine($"Código: {material.Codigo}, Título: {material.Titulo}, Disponível: {material.Disponivel}");
+			Console.WriteLine($"Código: {material.Codigo}, Título: {material.Titulo}, Ano: {material.AnoPublicacao}, Prazo: {material.CalcularPrazoDias()} dias, Disponível: {material.Disponivel}");
 		}
+	}
+
+	public Material BuscarMaterial(string codigo)
+	{
+		return materiais.Find(material => material.Codigo.Equals(codigo, StringComparison.OrdinalIgnoreCase));
 	}
 }
 
@@ -106,26 +117,108 @@ public class Program
 	public static void Main()
 	{
 		var biblioteca = new Biblioteca();
+		bool executando = true;
 
-		var livro = new Livro("L001", "O Senhor dos Anéis", 1954);
-		var revista = new Revista("R001", "O Príncipe", 1532);
-		var dvd = new DVD("D001", "Nineteen Eighty-Fourx", 1949);
+		while (executando)
+		{
+			Console.WriteLine("\n=== Sistema da Biblioteca ===");
+			Console.WriteLine("1 - Cadastrar material");
+			Console.WriteLine("2 - Consultar materiais");
+			Console.WriteLine("3 - Emprestar material");
+			Console.WriteLine("4 - Devolver material");
+			Console.WriteLine("0 - Sair");
+			Console.Write("Escolha uma opção: ");
 
-		biblioteca.CadastrarMaterial(livro);
-		biblioteca.CadastrarMaterial(revista);
-		biblioteca.CadastrarMaterial(dvd);
+			switch (Console.ReadLine())
+			{
+				case "1":
+					CadastrarMaterial(biblioteca);
+					break;
+				case "2":
+					biblioteca.ConsultarMateriais();
+					break;
+				case "3":
+					EmprestarMaterial(biblioteca);
+					break;
+				case "4":
+					DevolverMaterial(biblioteca);
+					break;
+				case "0":
+					executando = false;
+					Console.WriteLine("Sistema encerrado.");
+					break;
+				default:
+					Console.WriteLine("Opção inválida.");
+					break;
+			}
+		}
+	}
 
-		biblioteca.ConsultarMateriais();
+	private static void CadastrarMaterial(Biblioteca biblioteca)
+	{
+		Console.WriteLine("Tipo: 1 - Livro | 2 - Revista | 3 - DVD");
+		Console.Write("Escolha o tipo: ");
+		string tipo = Console.ReadLine();
 
-		livro.Emprestar("João");
-		revista.Emprestar("Maria");
-		dvd.Emprestar("Pedro");
+		if (tipo != "1" && tipo != "2" && tipo != "3")
+		{
+			Console.WriteLine("Tipo inválido.");
+			return;
+		}
 
-		biblioteca.ConsultarMateriais();
+		Console.Write("Código: ");
+		string codigo = Console.ReadLine();
+		if (biblioteca.BuscarMaterial(codigo) != null)
+		{
+			Console.WriteLine("Já existe um material com esse código.");
+			return;
+		}
 
-		livro.Devolver();
-		dvd.Devolver();
+		Console.Write("Título: ");
+		string titulo = Console.ReadLine();
+		Console.Write("Ano de publicação: ");
+		if (!int.TryParse(Console.ReadLine(), out int ano))
+		{
+			Console.WriteLine("Ano inválido.");
+			return;
+		}
 
-		biblioteca.ConsultarMateriais();
+		Material material;
+		switch (tipo)
+		{
+			case "1": material = new Livro(codigo, titulo, ano); break;
+			case "2": material = new Revista(codigo, titulo, ano); break;
+			default: material = new DVD(codigo, titulo, ano); break;
+		}
+
+		biblioteca.CadastrarMaterial(material);
+	}
+
+	private static void EmprestarMaterial(Biblioteca biblioteca)
+	{
+		Console.Write("Código do material: ");
+		Material material = biblioteca.BuscarMaterial(Console.ReadLine());
+		if (material == null)
+		{
+			Console.WriteLine("Material não encontrado.");
+			return;
+		}
+
+		Console.Write("Nome do usuário: ");
+		string usuario = Console.ReadLine();
+		material.Emprestar(usuario);
+	}
+
+	private static void DevolverMaterial(Biblioteca biblioteca)
+	{
+		Console.Write("Código do material: ");
+		Material material = biblioteca.BuscarMaterial(Console.ReadLine());
+		if (material == null)
+		{
+			Console.WriteLine("Material não encontrado.");
+			return;
+		}
+
+		material.Devolver();
 	}
 }
