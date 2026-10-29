@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ALUNO\\Desktop\\atividade\\atividade.csproj",
+      "projectUniqueName": "C:\\Users\\ALUNO\\Desktop\\ativ_heran-a\\atividade.csproj",
       "projectName": "atividade",
-      "projectPath": "C:\\Users\\ALUNO\\Desktop\\atividade\\atividade.csproj",
+      "projectPath": "C:\\Users\\ALUNO\\Desktop\\ativ_heran-a\\atividade.csproj",
       "packagesPath": "C:\\Users\\ALUNO\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ALUNO\\Desktop\\atividade\\obj\\",
+      "outputPath": "C:\\Users\\ALUNO\\Desktop\\ativ_heran-a\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ALUNO\\AppData\\Roaming\\NuGet\\NuGet.Config"
